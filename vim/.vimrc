@@ -136,7 +136,7 @@ set foldcolumn=1
 syntax enable 
 
 try
-    colorscheme peaksea
+    colorscheme base16-default
 catch
 endtry
 

@@ -30,7 +30,7 @@ link_item () {
     else
       read -p "$dst: Link exists but is bad, remove? [Y/n] " -r
       if [[ $REPLY =~ [yY](es)? ]] ; then
-        echo "$dst: Removing bad link ... "
+        echo -n "$dst: Removing bad link ... "
         rm $dst ; echo "done"
       else
         backup=true
