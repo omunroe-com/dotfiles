@@ -2,9 +2,8 @@ alias c='clear; ls'
 
 # directories
 alias home='cd ~/'
-alias workspace='cd ~/workspace/'
+alias work='cd ~/workspace/'
 alias remote='cd ~/remoteserv/'
-alias appstore='cd ~/workspace/famigo/web/AppStore/'
 
 # grep
 alias cgrep='grep --color=always'
