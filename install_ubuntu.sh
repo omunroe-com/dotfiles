@@ -18,45 +18,53 @@ install_dotfiles () {
 # Link a file or directory to the home directory.
 link_item () {
   local src=$1 dst=$2
-  skip=false
+  local backup=false
+  local skip=false
 
-  if [ -f "$dst" -o -d "$dst" -o -L "$dst" ] ; then
-    local cur_src="$(readlink $dst)"
+  if [ -L "$dst" ] ; then
+    local link_src="$(readlink $dst)"
 
-    if [ "$cur_src" == "$src" ] ; then
-      echo "$src: Link already exists, skipping."
+    if [ "$link_src" == "$src" ] ; then
+      echo "$dst: Link already exists, skipping."
       skip=true
     else
-      echo -n "$src: Already exists, backing up ... "
-      mv $dst $BACKUP_DIR
-      echo "done"
+      read -p "$dst: Link exists but is bad, remove? [Y/n] " -r
+      if [[ $REPLY =~ [yY](es)? ]] ; then
+        echo "$dst: Removing bad link ... "
+        rm $dst ; echo "done"
+      else
+        backup=true
+      fi
     fi
+  elif [ -f "$dst" -o -d "$dst" ] ; then
+    backup=true
+  fi
+
+  if [ "$backup" == "true" ] ; then
+    echo -n "$dst: Already exists, backing up ... "
+    mv $dst $BACKUP_DIR ; echo "done"
   fi
 
   if [ "$skip" == "false" ] ; then
-    # Create a symlink
     echo -n "Linking $src ... "
-    ln -s "$src" "$HOME"
-    echo "done"
+    ln -s "$src" "$HOME" ; echo "done"
   fi
 }
 
 # Create backup directory
 if [ ! -d $BACKUP_DIR ] ; then
   echo -n "Creating backup directory at $BACKUP_DIR for existing dotfiles ... "
-  mkdir $BACKUP_DIR
-  echo "done"
+  mkdir $BACKUP_DIR ; echo "done"
 fi
 
 # Change to dotfiles directory
 echo -n "Changing to $DIR directory ... "
-cd $DIR
-echo "done"
+cd $DIR ; echo "done"
 
 # Install the dotfiles
 echo "Installing dotfiles ... "
-echo ""
+echo
 install_dotfiles
-echo ""
+echo
 echo "Installation complete."
 
