@@ -117,7 +117,7 @@ set magic
 " Show matching brackets when text indicator is over them
 set showmatch 
 " How many tenths of a second to blink when matching brackets
-set mat=2
+set mat=0
 
 " No annoying sound on errors
 set noerrorbells
@@ -136,7 +136,7 @@ set foldcolumn=1
 syntax enable 
 
 try
-    colorscheme base16-eighties
+    colorscheme base16-default
 catch
 endtry
 
@@ -170,7 +170,7 @@ set noswapfile
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-set expandtab
+" set expandtab
 
 " Be smart when using tabs ;)
 set smarttab
