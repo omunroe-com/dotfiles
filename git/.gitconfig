@@ -5,9 +5,10 @@
         filemode = false
 [alias]
         st = status
+        df = diff
+        br = branch
         co = checkout
         cb = checkout -b
-        m = checkout master
         aa = add -A
         cm = commit -m
         ca = commit -a -m
