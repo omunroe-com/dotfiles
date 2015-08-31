@@ -1,7 +1,6 @@
 alias c="clear ; ls"
 
 # directories
-alias home="cd $HOME"
 alias work="cd $HOME/workspace/"
 
 # grep

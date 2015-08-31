@@ -114,13 +114,18 @@ if ! shopt -oq posix; then
 fi
 
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
 
+# Ruby
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+# Python
 # virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/workspace
 source /usr/local/bin/virtualenvwrapper.sh
+
+# Gradle
+export PATH="/opt/gradle-2.3/bin:$PATH"
 
