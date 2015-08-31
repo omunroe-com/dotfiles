@@ -126,6 +126,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/workspace
 source /usr/local/bin/virtualenvwrapper.sh
 
+
 ### Ruby
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
@@ -141,3 +142,6 @@ export PATH=/opt/bin:$PATH
 
 # Heroku
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# Gradle
+export PATH="/opt/gradle-2.3/bin:$PATH"
