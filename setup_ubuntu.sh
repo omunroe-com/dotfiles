@@ -18,9 +18,13 @@ declare -a repos=(
 	'webupd8team/y-ppa-manager'
 )
 
-for repo in "${repos[@]}"; do
-	add-apt-repository ppa:$repo
-done
+echo $repos
+read -p 'add proprietary repositories? [Y/n] ' -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	for repo in "${repos[@]}"; do
+		add-apt-repository ppa:$repo
+	done
+fi
 
 ### install packages
 declare -a packages=(
@@ -42,14 +46,15 @@ declare -a packages=(
 	'tmux'
 	'ubuntu-restricted-extras'
 	'unity-tweak-tool'
+	'vagrant'
 	'vim'
+	'virtualbox'
+	'virtualbox-guest-additions-iso'
 	'vlc'
 	'xclip'
 	# 'ack'
 	# 'compizconfig-settings-manager'
 	# 'tomboy'
-	# 'virtualbox'
-	# 'virtualbox-guest-additions-iso'
 
 	# third-party
 	'screenfetch'
@@ -59,11 +64,14 @@ declare -a packages=(
 	'y-ppa-manager'
 )
 
-apt-get update
-
-for package in "${packages[@]}"; do
-	apt-get install $package
-done
+echo $packages
+read -p 'install canonical packages? [Y/n] ' -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	apt-get update
+	for package in "${packages[@]}"; do
+		apt-get install $package
+	done
+fi
 
 
 ###########
@@ -71,9 +79,13 @@ done
 ###########
 
 ### install pip
-cd $HOME/Downloads
-wget https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
+read -p -n 'install pip? [Y/n] ' -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	echo
+	wget https://bootstrap.pypa.io/get-pip.py > python
+else
+	echo 'skipped'
+fi
 
 ### install pip packages
 declare -a pip_packages=(
@@ -83,41 +95,94 @@ declare -a pip_packages=(
 	# 'awscli'
 )
 
-for package in "${pip_packages[@]}"; do
-	pip install $package
-done
+echo $pip_packages
+read -p 'install pip packages? [Y/n] ' -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	for package in "${pip_packages[@]}"; do
+		pip install $package
+	done
+fi
 
 
 #####################
 ### configuration ###
 #####################
 
-### TODO: setup ssh keys
+### ssh keys ###
 # https://help.github.com/articles/generating-ssh-keys/
 ssh_key=$HOME/.ssh/id_rsa.pub
 if [ ! -f $ssh_key ]; then
-	ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+	read -p 'generate ssh key? [Y/n] ' -r
+	if [[ $reply =~ [yY](es)? ]] ; then
+		read -p 'enter your email address: ' -r
+		# todo: test email address
+		ssh-keygen -t rsa -b 4096 -C $reply
+		eval "$(ssh-agent -s)"
+		ssh-add $ssh_key
+	fi
 fi
-eval "$(ssh-agent -s)"
-ssh-add $ssh_key
-xclip -sel clip < $ssh_key
 
-# attempt to ssh to github
-ssh -T git@github.com
+read -p 'copy ssh key to clipboard? [Y/n] ' -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	if hash xclip 2>/dev/null; then
+		xclip -sel clip < $ssh_key
+		echo 'copied'
+		read -p 'press any key to continue ...'
+	else
+		echo -n 'unable to copy ssh key, '
+		if [ -f $ssh_key]; then
+			read -p 'print instead? [Y/n] ' -r
+			if [[ $reply =~ [yY](es)? ]] ; then
+				cat $ssh_key
+				read -p 'press any key to continue ...'
+			fi
+		else
+			echo 'skipping'
+			read -p 'press any key to continue ...'
+		fi
+	fi
+fi
+
+read -p 'test connection to github? [Y/n] ' -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	ssh -T git@github.com
+fi
 
 ### TODO: add applications to auto start
 
 ### add bookmarks
-if [ -f $HOME/alex/Dropbox ]; then
-	echo file:///home/alex/Dropbox >> $HOME/.config/gtk-3.0/bookmarks
+declare -a bookmarks=(
+	'workspace',
+	'Dropbox'
+)
+
+bookmarks_file=$HOME/.config/gtk-3.0/bookmarks
+if [ -f $bookmarks_file ]; do
+	for bookmark in "${bookmarks[@]}"; do
+		if [ -d $bookmark ]; do
+			read -p -n "Add $bookmark to bookmarks? [Y/n] " -r
+			if [[ $reply =~ [yY](es)? ]] ; then
+				echo file://$HOME/$bookmark >> $bookmarks_file
+				echo 'done'
+			else
+			  echo 'skipped'
+			fi
+		fi
+	done
 fi
 
-mkdir $HOME/workspace
-echo file:///home/alex/workspace >> $HOME/.config/gtk-3.0/bookmarks
+# disable bluetooth on startup?
 
 ### disable bluetooth on startup
-sudo echo rfkill block bluetooth >> /etc/rc.local
-
+# echo rfkill block bluetooth >> /etc/rc.local
+read -p -n "Disable bluetooth on startup? [Y/n] " -r
+if [[ $reply =~ [yY](es)? ]] ; then
+	disable_str="# Disable bluetooth on startup\nrfkill block bluetooth\n"
+	sed -i "/exit 0/i$disable_str" /etc/rc.local
+	echo 'done'
+else
+  echo 'skipped'
+fi
 
 ##############
 ### manual ###
