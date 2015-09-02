@@ -5,10 +5,10 @@ set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BACKUP_DIR="$DIR/backup"
 
-
 install_dotfiles () {
   for src in $(find $DIR -mindepth 2 -maxdepth 2 \
-      -not -path "$BACKUP_DIR)/*" -not -path "$DIR/.*")
+      -not -path "$BACKUP_DIR)/*" \
+      -not -path "$DIR/.*")
   do
     dst="$HOME/$(basename $src)"
     link_item "$src" "$dst"
@@ -28,10 +28,10 @@ link_item () {
       echo "$dst: Link already exists, skipping."
       skip=true
     else
-      read -p "$dst: Link exists but is bad, remove? [Y/n] " -r
-      if [[ $REPLY =~ [yY](es)? ]] ; then
+      read -p "$dst: Link exists but is bad, remove? [Y/n] " reply
+      if [[ $reply =~ [yY](es)? ]] ; then
         echo -n "$dst: Removing bad link ... "
-        rm $dst ; echo "done"
+        rm $dst ; echo 'done'
       else
         backup=true
       fi
@@ -42,29 +42,26 @@ link_item () {
 
   if [ "$backup" == "true" ] ; then
     echo -n "$dst: Already exists, backing up ... "
-    mv $dst $BACKUP_DIR ; echo "done"
+    mv $dst $BACKUP_DIR ; echo 'done'
   fi
 
   if [ "$skip" == "false" ] ; then
     echo -n "Linking $src ... "
-    ln -s "$src" "$HOME" ; echo "done"
+    ln -s "$src" "$HOME" ; echo 'done'
   fi
 }
 
 # Create backup directory
 if [ ! -d $BACKUP_DIR ] ; then
   echo -n "Creating backup directory at $BACKUP_DIR for existing dotfiles ... "
-  mkdir $BACKUP_DIR ; echo "done"
+  mkdir $BACKUP_DIR ; echo 'done'
 fi
 
 # Change to dotfiles directory
 echo -n "Changing to $DIR directory ... "
-cd $DIR ; echo "done"
+cd $DIR ; echo 'done'
 
 # Install the dotfiles
-echo "Installing dotfiles ... "
-echo
+echo -e 'Installing dotfiles ...\n'
 install_dotfiles
-echo
-echo "Installation complete."
-
+echo -e '\nInstallation complete.'
