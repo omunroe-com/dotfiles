@@ -1,35 +1,15 @@
-# ***THIS IS NOT A SCRIPT***
-# todo: make this a script
+#!/bin/bash
 
-# 1. connect to LAN or WiFi
-# 2. curl this script from github
-# 3. run the script with sudo
-
+# set -e
 
 ###############
 ### apt-get ###
 ###############
 
-### add repositories
-declare -a repos=(
-	'djcj/screenfetch'
-	'linrunner/tlp'
-	'webupd8team/sublime-text-3'
-	'webupd8team/y-ppa-manager'
-)
-
-echo $repos
-read -p 'add proprietary repositories? [Y/n] ' -r
-if [[ $reply =~ [yY](es)? ]] ; then
-	for repo in "${repos[@]}"; do
-		add-apt-repository ppa:$repo
-	done
-fi
-
 ### install packages
 declare -a packages=(
 	'curl'
-	'diodon'
+	# 'diodon'
 	'gimp'
 	'git'
 	'gparted'
@@ -38,10 +18,11 @@ declare -a packages=(
 	'meld'
 	'mypaint'
 	'nautilus-compare'
-	'nautilus-dropbox'
+	# 'nautilus-dropbox'
 	'openjdk-7-jdk'
 	'openjdk-8-jdk'
 	'p7zip-full'
+	'python-software-properties'
 	'synaptic'
 	'tmux'
 	'ubuntu-restricted-extras'
@@ -55,22 +36,54 @@ declare -a packages=(
 	# 'ack'
 	# 'compizconfig-settings-manager'
 	# 'tomboy'
+)
 
-	# third-party
+echo -e '### canonical packages'
+read -p 'install packages? [Y/n] ' reply
+if [[ $reply =~ [yY](es)? ]] ; then
+	apt-get -qq update
+	for package in "${packages[@]}"; do
+		echo -e "\n### $package"
+		apt-get install $package
+	done
+	echo -e '\n'
+fi
+
+### add third-party repositories
+declare -a repos=(
+	'djcj/screenfetch'
+	'linrunner/tlp'
+	'webupd8team/sublime-text-3'
+	'webupd8team/y-ppa-manager'
+)
+
+echo -e '\n### third-party repositories'
+read -p 'add repositories? [Y/n] ' reply
+if [[ $reply =~ [yY](es)? ]] ; then
+	for repo in "${repos[@]}"; do
+		echo -e "\n### $repo"
+		add-apt-repository ppa:$repo
+	done
+	echo -e '\n'
+fi
+
+### install third-party packages
+declare -a packages=(
 	'screenfetch'
 	'sublime-text-installer'
 	'tlp'
-	'tlp-rdw'
 	'y-ppa-manager'
 )
 
-echo $packages
-read -p 'install canonical packages? [Y/n] ' -r
+echo '### third-party packages'
+read -p 'install packages? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
-	apt-get update
+	apt-get -qq update
 	for package in "${packages[@]}"; do
-		apt-get install $package
+		echo -e "\n### $package"
+		apt-get install package
 	done
+	echo -e '\n'
 fi
 
 
@@ -79,12 +92,11 @@ fi
 ###########
 
 ### install pip
-read -p -n 'install pip? [Y/n] ' -r
+echo '### pip'
+read -p 'install pip? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
-	echo
-	wget https://bootstrap.pypa.io/get-pip.py > python
-else
-	echo 'skipped'
+	curl https://bootstrap.pypa.io/get-pip.py -o - | sudo python
+	echo -e '\n'
 fi
 
 ### install pip packages
@@ -95,12 +107,14 @@ declare -a pip_packages=(
 	# 'awscli'
 )
 
-echo $pip_packages
-read -p 'install pip packages? [Y/n] ' -r
+echo '### pip packages'
+read -p 'install pip packages? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
 	for package in "${pip_packages[@]}"; do
+		echo -e "\n### $package"
 		pip install $package
 	done
+	echo -e '\n'
 fi
 
 
@@ -112,17 +126,17 @@ fi
 # https://help.github.com/articles/generating-ssh-keys/
 ssh_key=$HOME/.ssh/id_rsa.pub
 if [ ! -f $ssh_key ]; then
-	read -p 'generate ssh key? [Y/n] ' -r
+	read -p 'generate ssh key? [Y/n] ' reply
 	if [[ $reply =~ [yY](es)? ]] ; then
 		read -p 'enter your email address: ' -r
 		# todo: test email address
 		ssh-keygen -t rsa -b 4096 -C $reply
 		eval "$(ssh-agent -s)"
-		ssh-add $ssh_key
+		ssh-add $ssh_key # todo, not found
 	fi
 fi
 
-read -p 'copy ssh key to clipboard? [Y/n] ' -r
+read -p 'copy ssh key to clipboard? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
 	if hash xclip 2>/dev/null; then
 		xclip -sel clip < $ssh_key
@@ -143,7 +157,7 @@ if [[ $reply =~ [yY](es)? ]] ; then
 	fi
 fi
 
-read -p 'test connection to github? [Y/n] ' -r
+read -p 'test connection to github? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
 	ssh -T git@github.com
 fi
