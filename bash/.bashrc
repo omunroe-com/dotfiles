@@ -114,13 +114,30 @@ if ! shopt -oq posix; then
 fi
 
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+### Java
+export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:/bin/javac::")
 
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+
+### Python
+export PYTHONSTARTUP=$HOME/.pystartup
 
 # virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/workspace
 source /usr/local/bin/virtualenvwrapper.sh
 
+### Ruby
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+
+### Android
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+
+
+### Misc
+export PATH=/opt/bin:$PATH
+
+# Heroku
+export PATH="/usr/local/heroku/bin:$PATH"
