@@ -6,7 +6,7 @@
 [alias]
         st = status
         df = diff
-        br = branch
+        br = branch -v
         co = checkout
         cb = checkout -b
         aa = add -A
