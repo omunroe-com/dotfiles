@@ -8,6 +8,7 @@
 
 ### install packages
 declare -a packages=(
+    # 'arcanist'
 	'curl'
 	# 'diodon'
 	'gimp'
@@ -15,16 +16,23 @@ declare -a packages=(
 	'gparted'
 	'guake'
 	'indicator-multiload'
+    'ipython'
+    'maven',
+    # 'maven3'
 	'meld'
 	'mypaint'
 	'nautilus-compare'
 	# 'nautilus-dropbox'
 	'openjdk-7-jdk'
 	'openjdk-8-jdk'
+    # 'openssh-server'
 	'p7zip-full'
 	'python-software-properties'
+    # 'redshift'
+    # 'shutter'
 	'synaptic'
 	'tmux'
+    # 'tree'
 	'ubuntu-restricted-extras'
 	'unity-tweak-tool'
 	'vagrant'
@@ -41,10 +49,10 @@ declare -a packages=(
 echo -e '### canonical packages'
 read -p 'install packages? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
-	apt-get -qq update
+	apt -qq update
 	for package in "${packages[@]}"; do
 		echo -e "\n### $package"
-		apt-get install $package
+		apt install $package
 	done
 	echo -e '\n'
 fi
@@ -62,6 +70,7 @@ read -p 'add repositories? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
 	for repo in "${repos[@]}"; do
 		echo -e "\n### $repo"
+        # todo: apt
 		add-apt-repository ppa:$repo
 	done
 	echo -e '\n'
@@ -78,10 +87,10 @@ declare -a packages=(
 echo '### third-party packages'
 read -p 'install packages? [Y/n] ' reply
 if [[ $reply =~ [yY](es)? ]] ; then
-	apt-get -qq update
+	apt -qq update
 	for package in "${packages[@]}"; do
 		echo -e "\n### $package"
-		apt-get install package
+		apt install package
 	done
 	echo -e '\n'
 fi
@@ -171,15 +180,15 @@ declare -a bookmarks=(
 )
 
 bookmarks_file=$HOME/.config/gtk-3.0/bookmarks
-if [ -f $bookmarks_file ]; do
+if [ -f $bookmarks_file ]; then
 	for bookmark in "${bookmarks[@]}"; do
-		if [ -d $bookmark ]; do
+		if [ -d $bookmark ]; then
 			read -p -n "Add $bookmark to bookmarks? [Y/n] " -r
 			if [[ $reply =~ [yY](es)? ]] ; then
 				echo file://$HOME/$bookmark >> $bookmarks_file
 				echo 'done'
 			else
-			  echo 'skipped'
+			    echo 'skipped'
 			fi
 		fi
 	done
@@ -258,10 +267,16 @@ fi
 # TODO: set up notifyosd.zsh
 # git@github.com:ihashacks/notifyosd.zsh.git
 
+# TODO: set up powerline
+# git clone https://github.com/powerline/fonts.git
+
 ### install sublime text 2 plugins
 # https://sublime.wbond.net/installation#st2
+# package control
 # sublimecodeintel
 # base16 themes
+# sublimelinter
+# activate sublime license
 
 # manually set color theme for gnome-terminal and guake
 
