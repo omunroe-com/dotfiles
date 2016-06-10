@@ -142,7 +142,7 @@ set foldcolumn=1
 syntax enable 
 
 try
-    colorscheme base16-default
+    colorscheme base16-tomorrow
 catch
 endtry
 
