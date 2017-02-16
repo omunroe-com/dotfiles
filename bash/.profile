@@ -30,7 +30,12 @@ fi
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 ### Android
-ANDROID_HOME=$HOME/Android/Sdk
+if [[ "$OSTYPE" == "gnu-linux" ]]; then
+    ANDROID_HOME=$HOME/Android/Sdk
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    ANDROID_HOME=$HOME/Library/Android/Sdk
+fi
+
 if [[ -d "$ANDROID_HOME" ]]; then
     export ANDROID_HOME
     export PATH=$ANDROID_HOME/tools:$PATH
